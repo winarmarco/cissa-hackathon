@@ -35,6 +35,11 @@ public class Game extends AbstractGame {
 
     // TEST ONLY
     private Image playerImg;
+    private Image backgroundImage;
+    private Image homeImage;
+    private Font titleText;
+    private Font subtitleText;
+    private boolean hasStarted = false;
     /* --------------------------------------------------------------- */
 
     private Particle randomParticle() {
@@ -79,6 +84,10 @@ public class Game extends AbstractGame {
         /* CHANGED BY PETER */
         playerImg = new Image("res/playerRed.png");
         textOutput = new Font("res/conformable.otf", 120);
+        backgroundImage = new Image("res/backgroundblack.jpeg");
+        homeImage = new Image("res/homescreen.jpeg");
+        titleText = new Font("res/arcadeclassic.ttf", 70); // Adjust the font path and size
+        subtitleText = new Font("res/conformable.otf", 40);
         drawOptions = new DrawOptions();
         player = new Player(new Point(200, 350), new Image("res/playerRed.png"));
         size = 1;
@@ -154,25 +163,28 @@ public class Game extends AbstractGame {
      */
     @Override
     public void update(Input input) {
-        /* CHANGED BY PETER */
-        // Movement of player
-        movement(player, input);
-        /* ---------------- */
-
-        for (Particle particle: particles) {
+        if (hasStarted) {
+            backgroundImage.draw(0,0, drawOptions.setScale(2,2));
             /* CHANGED BY PETER */
-            if (particle.getHidden()) continue;
+            // Movement of player
+            movement(player, input);
+            /* ---------------- */
 
-            intersection(player, particle);
-            /* ------------------------------------- */
+            for (Particle particle : particles) {
+                /* CHANGED BY PETER */
+                if (particle.getHidden()) continue;
 
-            particle.draw();
+                intersection(player, particle);
+                /* ------------------------------------- */
+
+                particle.draw();
+            }
+
+            /* CHANGED BY PETER */
+            // manual override of player image
+            playerImg.draw(player.getPoint().x, player.getPoint().y, drawOptions.setScale(size, size));
+            textOutput.drawString("Score : " + score, 45, 100);
+            /* --------------------------------------------------------------- */
         }
-
-        /* CHANGED BY PETER */
-        // manual override of player image
-        playerImg.draw(player.getPoint().x, player.getPoint().y, drawOptions.setScale(size, size));
-        textOutput.drawString("Score : " + score, 45, 100);
-        /* --------------------------------------------------------------- */
     }
 }
