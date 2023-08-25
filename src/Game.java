@@ -38,6 +38,8 @@ public class Game extends AbstractGame {
     // TEST ONLY
     private Image playerImg1;
     private Image playerImg2;
+    private Image playerImg3;
+    private Image playerImg4;
     private Image backgroundImage;
     private Image homeImage;
     private Font titleText;
@@ -85,16 +87,18 @@ public class Game extends AbstractGame {
         p2 = new Particle(2, new Point(200, 200));
 
         /* CHANGED BY PETER */
-        playerImg1 = new Image("res/playerBlue.png");
-        playerImg2 = new Image("res/playerRed.png");
+        playerImg1 = new Image("res/angrybird.png");
+        playerImg2 = new Image("res/morty.png");
+        playerImg3 = new Image("res/doge.png");
+        playerImg4 = new Image("res/penguin.png");
         textOutput = new Font("res/conformable.otf", 120);
         backgroundImage = new Image("res/backgroundblack.jpeg");
         homeImage = new Image("res/homescreen.jpeg");
         titleText = new Font("res/arcadeclassic.ttf", 70); // Adjust the font path and size
         subtitleText = new Font("res/conformable.otf", 40);
         drawOptions = new DrawOptions();
-        player1 = new Player(new Point(200, 350), new Image("res/player1.png"));
-        player2 = new Player(new Point(1900, 50), new Image("res/player2.png"));
+        player1 = new Player(new Point(200, 350), playerImg1);
+        player2 = new Player(new Point(1900, 50), playerImg2);
         size1 = 1;
         size2 = 1;
         /* ---------------------------- */
