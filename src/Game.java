@@ -1,13 +1,12 @@
 import bagel.*;
-import bagel.util.Point;
 
-public class BagelTest extends AbstractGame {
+public class Game extends AbstractGame {
     private Image smiley;
     private Image bagel;
     private double x = 100;
     private double y = 100;
 
-    public BagelTest() {
+    public Game() {
         super(800, 600, "Hello World");
         bagel = new Image("res/bagel.png");
         smiley = new Image("res/smiley.png");
@@ -17,7 +16,7 @@ public class BagelTest extends AbstractGame {
      * The entry point for the program.
      */
     public static void main(String[] args) {
-        BagelTest game = new BagelTest();
+        Game game = new Game();
         game.run();
     }
 
