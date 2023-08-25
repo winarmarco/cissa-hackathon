@@ -10,9 +10,7 @@ public class GameEntity {
         this.image = image;
     }
 
-
     public void draw() {
         this.image.draw(this.point.x, this.point.y);
     }
-
 }

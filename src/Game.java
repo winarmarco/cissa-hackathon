@@ -1,17 +1,31 @@
 import bagel.*;
+import bagel.util.Point;
+
+import java.util.Random;
+
 
 public class Game extends AbstractGame {
-    private Image smiley;
-    private Image bagel;
-    private double x = 100;
-    private double y = 100;
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 600;
+    private static final int NUM_PARTICLE = 50;
+    private Particle[] particles = new Particle[NUM_PARTICLE];
+    private Player player;
 
     public Game() {
-        super(800, 600, "Hello World");
-        bagel = new Image("res/bagel.png");
-        smiley = new Image("res/smiley.png");
-    }
+        super(WIDTH, HEIGHT, "Game Title");
+        Random rand = new Random();
 
+        for (int i = 0; i < NUM_PARTICLE; i++) {
+            double x = rand.nextDouble() * WIDTH;
+            double y = rand.nextDouble() * HEIGHT;
+
+            int imageNumber = rand.nextInt(Particle.NUM_IMAGES);
+
+            Point particlePoint = new Point(x, y);
+
+            this.particles[i] = new Particle(imageNumber, particlePoint);
+        }
+    }
     /**
      * The entry point for the program.
      */
@@ -28,25 +42,25 @@ public class Game extends AbstractGame {
     public void update(Input input) {
         double speed = 0.5;
 
-        if (input.isDown(Keys.LEFT)) {
-            x -= speed;
-        }
-        if (input.isDown(Keys.RIGHT)) {
-            x += speed;
-        }
-        if (input.isDown(Keys.UP)) {
-            y -= speed;
-        }
-        if (input.isDown(Keys.DOWN)) {
-            y += speed;
-        }
+//        if (input.isDown(Keys.LEFT)) {
+//            x -= speed;
+//        }
+//        if (input.isDown(Keys.RIGHT)) {
+//            x += speed;
+//        }
+//        if (input.isDown(Keys.UP)) {
+//            y -= speed;
+//        }
+//        if (input.isDown(Keys.DOWN)) {
+//            y += speed;
+//        }
 
         if (input.wasPressed(Keys.ESCAPE)) {
             Window.close();
         }
 
-
-        bagel.draw(Window.getWidth() / 2.0, Window.getHeight() / 2.0);
-        smiley.draw(x, y);
+        for (Particle particle: particles) {
+            particle.draw();
+        }
     }
 }

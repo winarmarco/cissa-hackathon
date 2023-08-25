@@ -9,8 +9,5 @@
         <module name="bagel" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="cissa-hackathon" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>
