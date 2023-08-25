@@ -20,9 +20,11 @@ public class Game extends AbstractGame {
 
     /* CHANGED BY PETER */
     private Font textOutput;
-    private Player player;
+    private Player player1;
+    private Player player2;
     private int score = 0;
-    private double size;
+    private double size1;
+    private double size2;
 
     // For scaling the player
     private DrawOptions drawOptions;
@@ -34,7 +36,8 @@ public class Game extends AbstractGame {
     private final int BASE = 20;
 
     // TEST ONLY
-    private Image playerImg;
+    private Image playerImg1;
+    private Image playerImg2;
     private Image backgroundImage;
     private Image homeImage;
     private Font titleText;
@@ -82,15 +85,18 @@ public class Game extends AbstractGame {
         p2 = new Particle(2, new Point(200, 200));
 
         /* CHANGED BY PETER */
-        playerImg = new Image("res/playerRed.png");
+        playerImg1 = new Image("res/playerBlue.png");
+        playerImg2 = new Image("res/playerRed.png");
         textOutput = new Font("res/conformable.otf", 120);
         backgroundImage = new Image("res/backgroundblack.jpeg");
         homeImage = new Image("res/homescreen.jpeg");
         titleText = new Font("res/arcadeclassic.ttf", 70); // Adjust the font path and size
         subtitleText = new Font("res/conformable.otf", 40);
         drawOptions = new DrawOptions();
-        player = new Player(new Point(200, 350), new Image("res/playerRed.png"));
-        size = 1;
+        player1 = new Player(new Point(200, 350), new Image("res/player1.png"));
+        player2 = new Player(new Point(1900, 50), new Image("res/player2.png"));
+        size1 = 1;
+        size2 = 1;
         /* ---------------------------- */
 
         for (int i = 0; i < MAX_NUM_PARTICLE; i++) {
@@ -104,16 +110,34 @@ public class Game extends AbstractGame {
      * Movement of the player with - out of bounds - checker
      */
     public void movement(Player player, Input input) {
-        if (player.getPoint().x > 20 + size && input.isDown(Keys.LEFT)) {
+        if (player.getPoint().x > 20 + size1 && input.isDown(Keys.LEFT)) {
             player.moveLeft(STEP_SIZE);
         }
-        if (player.getPoint().x < 1900 + size && input.isDown(Keys.RIGHT)) {
+        if (player.getPoint().x < 1900 + size1 && input.isDown(Keys.RIGHT)) {
             player.moveRight(STEP_SIZE);
         }
-        if (player.getPoint().y > 20  + size && input.isDown(Keys.UP)) {
+        if (player.getPoint().y > 20  + size1 && input.isDown(Keys.UP)) {
             player.moveUp(STEP_SIZE);
         }
-        if (player.getPoint().y < 1060 + size && input.isDown(Keys.DOWN)) {
+        if (player.getPoint().y < 1060 + size1 && input.isDown(Keys.DOWN)) {
+            player.moveDown(STEP_SIZE);
+        }
+        if (input.wasPressed(Keys.ESCAPE)) {
+            Window.close();
+        }
+    }
+
+    public void movement2(Player player, Input input) {
+        if (player.getPoint().x > 20 + size2 && input.isDown(Keys.A)) {
+            player.moveLeft(STEP_SIZE);
+        }
+        if (player.getPoint().x < 1900 + size2 && input.isDown(Keys.D)) {
+            player.moveRight(STEP_SIZE);
+        }
+        if (player.getPoint().y > 20  + size2 && input.isDown(Keys.W)) {
+            player.moveUp(STEP_SIZE);
+        }
+        if (player.getPoint().y < 1060 + size2 && input.isDown(Keys.S)) {
             player.moveDown(STEP_SIZE);
         }
         if (input.wasPressed(Keys.ESCAPE)) {
@@ -134,11 +158,25 @@ public class Game extends AbstractGame {
      * Check for objects intersection
      */
     public void intersection(Player player, Particle particle) {
-        if (distance(player.getPoint(), particle.getPoint()) <= BASE * size) {
+        if (distance(player.getPoint(), particle.getPoint()) <= BASE * size1) {
             // add score, since intersects
             // ... remove particle ..
             particle.toggleHidden();
-            size += 0.5;
+            size1 += 0.5;
+            score++;
+            // check every 5 score needs to be slower for player's speed
+            if ((score + 1) % 5 == 0) {
+                STEP_SIZE -= 0.25;
+            }
+        }
+    }
+
+    public void intersection2(Player player, Particle particle) {
+        if (distance(player.getPoint(), particle.getPoint()) <= BASE * size2) {
+            // add score, since intersects
+            // ... remove particle ..
+            particle.toggleHidden();
+            size2 += 0.5;
             score++;
             // check every 5 score needs to be slower for player's speed
             if ((score + 1) % 5 == 0) {
@@ -167,14 +205,16 @@ public class Game extends AbstractGame {
             backgroundImage.draw(0,0, drawOptions.setScale(2,2));
             /* CHANGED BY PETER */
             // Movement of player
-            movement(player, input);
+            movement(player1, input);
+            movement2(player2, input);
             /* ---------------- */
 
             for (Particle particle : particles) {
                 /* CHANGED BY PETER */
                 if (particle.getHidden()) continue;
 
-                intersection(player, particle);
+                intersection(player1, particle);
+                intersection2(player2, particle);
                 /* ------------------------------------- */
 
                 particle.draw();
@@ -182,9 +222,23 @@ public class Game extends AbstractGame {
 
             /* CHANGED BY PETER */
             // manual override of player image
-            playerImg.draw(player.getPoint().x, player.getPoint().y, drawOptions.setScale(size, size));
+            playerImg1.draw(player1.getPoint().x, player1.getPoint().y, drawOptions.setScale(size1, size1));
+            playerImg2.draw(player2.getPoint().x, player2.getPoint().y, drawOptions.setScale(size2, size2));
             textOutput.drawString("Score : " + score, 45, 100);
             /* --------------------------------------------------------------- */
+        } else {
+            double titleX = Window.getWidth() / 2.0 - titleText.getWidth("GAME TITLE") / 2;
+            double titleY = Window.getHeight() / 2.0 + 70.0 / 2.0;
+
+            double subtitleX = Window.getWidth() / 2.0 - subtitleText.getWidth("PRESS ENTER TO PLAY") / 2;
+            double subtitleY = Window.getHeight() / 2.0 + 40.0 / 2.0 + 55;
+
+            homeImage.draw(Window.getWidth() / 2.0,Window.getHeight() / 2.0, drawOptions.setScale(1.5, 1.5));
+            titleText.drawString("GAME TITLE", titleX, titleY);
+            subtitleText.drawString("PRESS ENTER TO PLAY", subtitleX, subtitleY);
+            if (input.wasPressed(Keys.ENTER)) {
+                hasStarted = true;
+            }
         }
     }
 }
