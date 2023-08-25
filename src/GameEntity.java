@@ -1,8 +1,10 @@
+import bagel.DrawOptions;
 import bagel.Image;
 import bagel.util.Point;
 import bagel.util.Rectangle;
 
 public class GameEntity {
+
     private Point point;
     private Image image;
 

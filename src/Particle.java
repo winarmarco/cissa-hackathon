@@ -8,8 +8,11 @@ public class Particle extends GameEntity {
     private static final Double[] PROBABILITY_DISTRIBUTION = {0.3, 0.1, 0.6};
     public static final int NUM_IMAGES = 3;
 
+    public boolean hidden;
+
     public Particle(int particleType, Point point) {
         super(point, new Image(IMAGES[particleType]));
+        this.hidden = false;
     }
 
     public static int generateRandomParticleType() {
@@ -31,5 +34,11 @@ public class Particle extends GameEntity {
         return particleType;
     }
 
+    public void toggleHidden() {
+        this.hidden = !this.hidden;
+    }
 
+    public boolean getHidden() {
+        return this.hidden;
+    }
 }
