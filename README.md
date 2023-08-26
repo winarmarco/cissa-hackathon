@@ -64,3 +64,6 @@ This project draws inspiration from [Agar.io](https://agar.io/), a popular onlin
 ## Demo link
 [Demo Video](https://drive.google.com/file/d/1215FgIqF16337Mram8FC7HiUPUhAuf64/view?ts=64ea2c92&pli=1)
 
+## License
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
