@@ -179,9 +179,6 @@ public class Player extends GameEntity {
         if (player.getPoint().y < 1060 + scaleSize && input.isDown(Keys.DOWN)) {
             player.moveDown(speed);
         }
-        if (input.wasPressed(Keys.ESCAPE)) {
-            Window.close();
-        }
     }
 
     public void movement1(Player player, Input input) {
@@ -196,9 +193,6 @@ public class Player extends GameEntity {
         }
         if (player.getPoint().y < 1060 + scaleSize && input.isDown(Keys.S)) {
             player.moveDown(speed);
-        }
-        if (input.wasPressed(Keys.ESCAPE)) {
-            Window.close();
         }
     }
 
