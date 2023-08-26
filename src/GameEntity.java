@@ -17,6 +17,10 @@ public class GameEntity {
         this.image.draw(this.point.x, this.point.y);
     }
 
+    public void draw(double a, double b) {
+        this.image.draw(this.point.x, this.point.y, new DrawOptions().setScale(a, b));
+    }
+
     public Image getImage() {
         return this.image;
     }
