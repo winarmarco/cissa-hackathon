@@ -114,8 +114,8 @@ public class Game extends AbstractGame {
         super(WIDTH, HEIGHT, "BattleSphere");
 
         audioPlayer = new SimpleAudioPlayer("res/bgMusic.wav");
-        textOutput = new Font("res/chary.ttf", 65);
-        timerText = new Font("res/chary.ttf", 64);
+        textOutput = new Font("res/chary.ttf", 52);
+        timerText = new Font("res/chary.ttf", 52);
         backgroundImage = new Image("res/backgroundblack.jpeg");
         homeImage = new Image("res/homescreen.jpeg");
         titleText = new Font("res/arcadeclassic.ttf", 70); // Adjust the font path and size
@@ -205,15 +205,16 @@ public class Game extends AbstractGame {
                     /* Output all the visuals */
                     double timerTextWidth = timerText.getWidth(formatTime(timer));
                     timerText.drawString(formatTime(timer),WIDTH / 2 - (timerTextWidth / 2), 100);
-                    textOutput.drawString("Score 1 : " + player1.score, X_PADDING, Y_PADDING);
-                    textOutput.drawString("Score 2 : " + player2.score, X_PADDING, Y_PADDING * 2);
+                    textOutput.drawString("Score 1 (Blue): " + player1.score, X_PADDING, Y_PADDING);
+                    textOutput.drawString("Score 2 (Red): " + player2.score, X_PADDING, Y_PADDING * 2);
                 } else {
                     homeImage.draw(Window.getWidth() / 2.0,Window.getHeight() / 2.0, drawOptions.setScale(1.5, 1.5));
                     titleText.drawString("How to play", 2 * X_PADDING, 2 * Y_PADDING);
                     subtitleText.drawString("PRESS SPACE TO CONTINUE", 2 * X_PADDING, 3 * Y_PADDING);
                     subtitleText.drawString("When you start, you'll control a small cell" +
-                            "\n\n  Player 1 can move their cell using the key 'W', 'A', 'S', D' " +
-                            "\n  and Player 2 with 'UP', 'LEFT', 'RIGHT', 'DOWN'" +
+                            "\n\n  Player 1 (Blue, at Bottom Left) can move their cell using" +
+                            "\n  the key 'W', 'A', 'S', D' and Player 2 (Red, at Top Right) with" +
+                            "\n  'UP', 'LEFT', 'RIGHT', 'DOWN'" +
                             "\n\n  Both players can eliminate each other by consuming them" +
                             "\n  This gives them 3 additional points" +
                             "\n\n  Once the timer runs out, the player with the highest score" +

@@ -64,7 +64,7 @@ public class Player extends GameEntity {
         return this.speed;
     }
     public void setSpeed(double newSpeed) {
-        if (newSpeed > 0) this.speed = newSpeed;
+        this.speed = (newSpeed > 0.5) ? newSpeed : 0.5;
     }
 
     public Rectangle getBoundingBox() {
@@ -132,7 +132,7 @@ public class Player extends GameEntity {
         this.increaseScore();
 
         if ((this.score + 1) % 5 == 0) {
-            this.setSpeed(this.speed - 0.25);
+            this.setSpeed(this.speed - 0.05);
         }
 
     }
