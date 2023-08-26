@@ -1,5 +1,7 @@
 import bagel.*;
+import bagel.util.Colour;
 import bagel.util.Point;
+import bagel.util.Rectangle;
 
 import java.util.Random;
 
@@ -98,56 +100,40 @@ public class Game extends AbstractGame {
     }
 
     /**
-     * Check for objects intersection
-     */
-    public void intersection(Player player, Particle particle) {
-        if (distance(player.getPoint(), particle.getPoint()) <= BASE * player.size) {
-            // remove particle
-            particle.toggleHidden();
-            player.size += 0.5;
-            player.score++;
-            // check every 5 score needs to be slower for player's speed
-            if ((player.score + 1) % 5 == 0) {
-                player.STEP_SIZE -= 0.25;
-            }
-        }
-    }
-
-    /**
      * Check for players' intersection between one and another
      */
-    public int isPlayerIntersect(Player player1, Player player2) {
-        if ((distance(player1.getPoint(), player2.getPoint()) <= BASE * player1.size) && (player1.size > player2.size)) {
-            // remove player 2
-            player2.toggleHidden();
-            return 2;
-        }
-        else if ((distance(player2.getPoint(), player1.getPoint()) <= BASE * player2.size) && (player2.size > player1.size)) {
-            // remove player 1
-            player1.toggleHidden();
-            return 1;
-        }
-        return 0;
-    }
+//    public int isPlayerIntersect(Player player1, Player player2) {
+//        if ((distance(player1.getPoint(), player2.getPoint()) <= BASE * player1.size) && (player1.size > player2.size)) {
+//            // remove player 2
+//            player2.toggleHidden();
+//            return 2;
+//        }
+//        else if ((distance(player2.getPoint(), player1.getPoint()) <= BASE * player2.size) && (player2.size > player1.size)) {
+//            // remove player 1
+//            player1.toggleHidden();
+//            return 1;
+//        }
+//        return 0;
+//    }
 
     /**
      * Implementation for players' intersection
      */
-    public void playersIntersection (Player player1, Player player2) {
-        // If both do not intersect then draw all players
-        if (isPlayerIntersect(player1, player2) == 0) {
-            player1.draw(player1.size, player1.size);
-            player2.draw(player2.size, player2.size);
-        }
-        // If player 1 get eaten
-        else if (isPlayerIntersect(player1, player2) == 1) {
-            player2.draw(player2.size, player2.size);
-        }
-        // If player 2 get eaten
-        else if (isPlayerIntersect(player1, player2) == 2) {
-            player1.draw(player1.size, player1.size);
-        }
-    }
+//    public void playersIntersection (Player player1, Player player2) {
+//        // If both do not intersect then draw all players
+//        if (isPlayerIntersect(player1, player2) == 0) {
+//            player1.draw(player1.size, player1.size);
+//            player2.draw(player2.size, player2.size);
+//        }
+//        // If player 1 get eaten
+//        else if (isPlayerIntersect(player1, player2) == 1) {
+//            player2.draw(player2.size, player2.size);
+//        }
+//        // If player 2 get eaten
+//        else if (isPlayerIntersect(player1, player2) == 2) {
+//            player1.draw(player1.size, player1.size);
+//        }
+//    }
 
     /**
      * The entry point for the program.
@@ -174,17 +160,26 @@ public class Game extends AbstractGame {
             // Checking, hiding and drawing particles
             for (Particle particle : particles) {
                 if (particle.getHidden()) continue;
-                intersection(player1, particle);
-                intersection(player2, particle);
+
+
+                if (player1.isIntersect(particle, 70)) {
+                    player1.particleIntersectBehaviour(particle);
+                } else if (player2.isIntersect(particle, 70)) {
+                    player2.particleIntersectBehaviour(particle);
+                }
                 particle.draw();
             }
 
             // Checking for player intersections
-            playersIntersection(player1, player2);
+//            System.out.println(player1.isIntersect(player2, 60));
 
             /* Output all the visuals */
-            textOutput.drawString("Score1 : " + player1.score, 45, 100);
-            textOutput.drawString("Score2 : " + player2.score, 45, 200);
+            textOutput.drawString("Score 1 : " + player1.score, 45, 100);
+            textOutput.drawString("Score 2 : " + player2.score, 45, 200);
+
+            player1.draw();
+            player2.draw();
+
 
         } else {
             double titleX = Window.getWidth() / 2.0 - titleText.getWidth("GAME TITLE") / 2;
