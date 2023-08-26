@@ -4,6 +4,9 @@ import bagel.Image;
 import bagel.Window;
 import bagel.util.Point;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,6 +43,7 @@ public class Game extends AbstractGame {
     private Timer countdownTimer;
     private int timer = 30;
     private boolean isGameOver = false;
+    private static SimpleAudioPlayer audioPlayer;
 
 
     /**
@@ -106,11 +110,10 @@ public class Game extends AbstractGame {
     /**
      * Constructors for the game
      */
-    public Game() {
+    public Game() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         super(WIDTH, HEIGHT, "BattleSphere");
-        p1 = new Particle(1, new Point(100, 200));
-        p2 = new Particle(2, new Point(200, 200));
 
+        audioPlayer = new SimpleAudioPlayer("res/bgMusic.wav");
         textOutput = new Font("res/chary.ttf", 65);
         timerText = new Font("res/chary.ttf", 64);
         backgroundImage = new Image("res/backgroundblack.jpeg");
@@ -127,8 +130,9 @@ public class Game extends AbstractGame {
     /**
      * The entry point for the program.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         Game game = new Game();
+        audioPlayer.play();
         game.run();
     }
 
@@ -279,6 +283,7 @@ public class Game extends AbstractGame {
 
         if (input.wasPressed(Keys.ESCAPE)) {
             if (countdownTimer != null) countdownTimer.cancel();
+            audioPlayer.pause();
             Window.close();
         }
     }
