@@ -20,12 +20,13 @@ public class Game extends AbstractGame {
     private Player player1;
     private Player player2;
     private DrawOptions drawOptions; // Scale the other visuals than players
-    private final int BASE = 20; // Default particle's size in pixel
     private Image backgroundImage;
     private Image homeImage;
     private Font titleText;
+    private Font timerText;
     private Font subtitleText;
     private boolean hasStarted = false;
+    private int timer = 120;
 
 
     /**
@@ -73,8 +74,8 @@ public class Game extends AbstractGame {
         p1 = new Particle(1, new Point(100, 200));
         p2 = new Particle(2, new Point(200, 200));
 
-        /* CHANGED BY PETER */
-        textOutput = new Font("res/conformable.otf", 120);
+        textOutput = new Font("res/conformable.otf", 90);
+        timerText = new Font("res/conformable.otf", 120);
         backgroundImage = new Image("res/backgroundblack.jpeg");
         homeImage = new Image("res/homescreen.jpeg");
         titleText = new Font("res/arcadeclassic.ttf", 70); // Adjust the font path and size
@@ -82,7 +83,6 @@ public class Game extends AbstractGame {
         drawOptions = new DrawOptions();
         player1 = new Player(new Point(200, 350), new Image("res/playerBlue.png"));
         player2 = new Player(new Point(1900, 50), new Image("res/playerRed.png"));
-        /* ---------------------------- */
 
         for (int i = 0; i < MAX_NUM_PARTICLE; i++) {
             particles[numParticle] = randomParticle();
@@ -98,42 +98,6 @@ public class Game extends AbstractGame {
                 Math.sqrt(Math.pow((point1.x - point2.x), 2)
                         + Math.pow((point1.y - point2.y), 2)));
     }
-
-    /**
-     * Check for players' intersection between one and another
-     */
-//    public int isPlayerIntersect(Player player1, Player player2) {
-//        if ((distance(player1.getPoint(), player2.getPoint()) <= BASE * player1.size) && (player1.size > player2.size)) {
-//            // remove player 2
-//            player2.toggleHidden();
-//            return 2;
-//        }
-//        else if ((distance(player2.getPoint(), player1.getPoint()) <= BASE * player2.size) && (player2.size > player1.size)) {
-//            // remove player 1
-//            player1.toggleHidden();
-//            return 1;
-//        }
-//        return 0;
-//    }
-
-    /**
-     * Implementation for players' intersection
-     */
-//    public void playersIntersection (Player player1, Player player2) {
-//        // If both do not intersect then draw all players
-//        if (isPlayerIntersect(player1, player2) == 0) {
-//            player1.draw(player1.size, player1.size);
-//            player2.draw(player2.size, player2.size);
-//        }
-//        // If player 1 get eaten
-//        else if (isPlayerIntersect(player1, player2) == 1) {
-//            player2.draw(player2.size, player2.size);
-//        }
-//        // If player 2 get eaten
-//        else if (isPlayerIntersect(player1, player2) == 2) {
-//            player1.draw(player1.size, player1.size);
-//        }
-//    }
 
     /**
      * The entry point for the program.
@@ -170,16 +134,26 @@ public class Game extends AbstractGame {
                 particle.draw();
             }
 
-            // Checking for player intersections
-//            System.out.println(player1.isIntersect(player2, 60));
+            // Checking for player intersecting player
+            if (player1.isIntersect(player2, 60) && player1.getScaleSize() > player2.getScaleSize()) {
+                player1.playerIntersectBehaviour(player2);
+                player1.respawn();
+                player2.respawn();
+            }
+            else if (player2.isIntersect(player1, 60) && player2.getScaleSize() > player1.getScaleSize()) {
+                player2.playerIntersectBehaviour(player1);
+                player1.respawn();
+                player2.respawn();
+            } else {
+                player1.draw();
+                player2.draw();
+            }
 
+            timer--;
             /* Output all the visuals */
+            timerText.drawString(String.valueOf(timer), 950, 100);
             textOutput.drawString("Score 1 : " + player1.score, 45, 100);
             textOutput.drawString("Score 2 : " + player2.score, 45, 200);
-
-            player1.draw();
-            player2.draw();
-
 
         } else {
             double titleX = Window.getWidth() / 2.0 - titleText.getWidth("GAME TITLE") / 2;

@@ -3,6 +3,7 @@ import bagel.util.Point;
 import bagel.util.Rectangle;
 
 public class Player extends GameEntity {
+    private Point spawnedPoint;
     private double scaleSize = 1.0;
     private double speed = 2.00;
     public int score = 0;
@@ -11,6 +12,7 @@ public class Player extends GameEntity {
     public Player(Point point, Image image) {
         super(point, image);
         this.hidden = false;
+        this.spawnedPoint = point;
     }
 
     /* CHANGED BY PETER */
@@ -136,15 +138,35 @@ public class Player extends GameEntity {
 
     }
 
+    public void playerIntersectBehaviour(Player player) {
+        player.toggleHidden();
+        this.draw();
+        this.score += 3;
+
+    }
+
+    public void respawn() {
+        this.setPoint(spawnedPoint);
+        this.scaleSize = 1.00;
+        this.speed = 2.00;
+    }
+
+
     public void draw() {
         DrawOptions drawOptions = new DrawOptions().setScale(this.scaleSize, this.scaleSize);
+        Font sizeTxt = new Font("res/conformable.otf", 40);
         super.draw(drawOptions);
+
+
+        double textWidth = sizeTxt.getWidth(String.valueOf(this.scaleSize));
+        double textHeight = 40.0;
+        sizeTxt.drawString(String.valueOf(this.scaleSize), this.getPoint().x - (textWidth / 2), this.getPoint().y + (textHeight / 2));
     }
 
     /**
      * Movement of the player with - out of bounds - checker
      */
-    public void movement1(Player player, Input input) {
+    public void movement2(Player player, Input input) {
         if (player.getPoint().x > 20 + scaleSize && input.isDown(Keys.LEFT)) {
             player.moveLeft(speed);
         }
@@ -162,7 +184,7 @@ public class Player extends GameEntity {
         }
     }
 
-    public void movement2(Player player, Input input) {
+    public void movement1(Player player, Input input) {
         if (player.getPoint().x > 20 + scaleSize && input.isDown(Keys.A)) {
             player.moveLeft(speed);
         }
