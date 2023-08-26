@@ -1,4 +1,5 @@
 import bagel.*;
+import bagel.util.Colour;
 import bagel.util.Point;
 import bagel.util.Rectangle;
 
@@ -125,11 +126,9 @@ public class Player extends GameEntity {
     public void particleIntersectBehaviour(Particle particle) {
         // if a player intersects with a particle, we
         // - increase the size of player
-        // - hide the particle
         // - increase the player score
         // - decrease the speed for every 5 score it gets
-        this.increaseScaleSize(0.5);
-        particle.toggleHidden();
+        this.increaseScaleSize(0.2);
         this.increaseScore();
 
         if ((this.score + 1) % 5 == 0) {
@@ -149,6 +148,7 @@ public class Player extends GameEntity {
         this.setPoint(spawnedPoint);
         this.scaleSize = 1.00;
         this.speed = 2.00;
+
     }
 
 
@@ -157,41 +157,45 @@ public class Player extends GameEntity {
         Font sizeTxt = new Font("res/conformable.otf", 40);
         super.draw(drawOptions);
 
+        Rectangle rect = this.getBoundingBox();
+        double radius = (rect.right() - rect.left()) / 2.0;
+        Drawing.drawCircle(rect.centre(), radius, new Colour(0, 0, 0, 0.15));
 
-        double textWidth = sizeTxt.getWidth(String.valueOf(this.scaleSize));
+        double textWidth = sizeTxt.getWidth(String.format("%.2f", this.scaleSize));
         double textHeight = 40.0;
-        sizeTxt.drawString(String.valueOf(this.scaleSize), this.getPoint().x - (textWidth / 2), this.getPoint().y + (textHeight / 2));
+        sizeTxt.drawString(String.format("%.2f", this.scaleSize), this.getPoint().x - (textWidth / 2), this.getPoint().y + (textHeight / 2));
+
     }
 
     /**
      * Movement of the player with - out of bounds - checker
      */
     public void movement2(Player player, Input input) {
-        if (player.getPoint().x > 20 + scaleSize && input.isDown(Keys.LEFT)) {
+        if (player.getPoint().x > 0 && input.isDown(Keys.LEFT)) {
             player.moveLeft(speed);
         }
-        if (player.getPoint().x < 1900 + scaleSize && input.isDown(Keys.RIGHT)) {
+        if (player.getPoint().x < Game.WIDTH && input.isDown(Keys.RIGHT)) {
             player.moveRight(speed);
         }
-        if (player.getPoint().y > 20  + scaleSize && input.isDown(Keys.UP)) {
+        if (player.getPoint().y > 0  && input.isDown(Keys.UP)) {
             player.moveUp(speed);
         }
-        if (player.getPoint().y < 1060 + scaleSize && input.isDown(Keys.DOWN)) {
+        if (player.getPoint().y < Game.HEIGHT + scaleSize && input.isDown(Keys.DOWN)) {
             player.moveDown(speed);
         }
     }
 
     public void movement1(Player player, Input input) {
-        if (player.getPoint().x > 20 + scaleSize && input.isDown(Keys.A)) {
+        if (player.getPoint().x > 0 + scaleSize && input.isDown(Keys.A)) {
             player.moveLeft(speed);
         }
-        if (player.getPoint().x < 1900 + scaleSize && input.isDown(Keys.D)) {
+        if (player.getPoint().x < Game.WIDTH  && input.isDown(Keys.D)) {
             player.moveRight(speed);
         }
-        if (player.getPoint().y > 20  + scaleSize && input.isDown(Keys.W)) {
+        if (player.getPoint().y > 0 && input.isDown(Keys.W)) {
             player.moveUp(speed);
         }
-        if (player.getPoint().y < 1060 + scaleSize && input.isDown(Keys.S)) {
+        if (player.getPoint().y < Game.HEIGHT  && input.isDown(Keys.S)) {
             player.moveDown(speed);
         }
     }
