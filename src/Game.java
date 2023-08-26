@@ -12,41 +12,23 @@ public class Game extends AbstractGame {
     private static final double Y_PADDING = 50;
     private Particle[] particles = new Particle[MAX_NUM_PARTICLE];
     private int numParticle = 0;
-    
-    
     private Particle p1;
     private Particle p2;
-
-
-    /* CHANGED BY PETER */
-    private Font textOutput;
+    private Font textOutput; // Outputting texts
     private Player player1;
     private Player player2;
-    private int score = 0;
-    private double size1;
-    private double size2;
-
-    // For scaling the player
-    private DrawOptions drawOptions;
-
-    // Default player movement speed
-    private double STEP_SIZE = 3.5;
-
-    // Default particle size
-    private final int BASE = 20;
-
-    // TEST ONLY
-    private Image playerImg1;
-    private Image playerImg2;
-    private Image playerImg3;
-    private Image playerImg4;
+    private DrawOptions drawOptions; // Scale the other visuals than players
+    private final int BASE = 20; // Default particle's size in pixel
     private Image backgroundImage;
     private Image homeImage;
     private Font titleText;
     private Font subtitleText;
     private boolean hasStarted = false;
-    /* --------------------------------------------------------------- */
 
+
+    /**
+     * Randomizing particles' placement
+     */
     private Particle randomParticle() {
         Random rand = new Random();
         boolean isIntersectingOtherParticle = true;
@@ -81,71 +63,28 @@ public class Game extends AbstractGame {
         return newParticle;
     }
 
+    /**
+     * Constructors for the game
+     */
     public Game() {
         super(WIDTH, HEIGHT, "Game Title");
         p1 = new Particle(1, new Point(100, 200));
         p2 = new Particle(2, new Point(200, 200));
 
         /* CHANGED BY PETER */
-        playerImg1 = new Image("res/angrybird.png");
-        playerImg2 = new Image("res/morty.png");
-        playerImg3 = new Image("res/doge.png");
-        playerImg4 = new Image("res/penguin.png");
         textOutput = new Font("res/conformable.otf", 120);
         backgroundImage = new Image("res/backgroundblack.jpeg");
         homeImage = new Image("res/homescreen.jpeg");
         titleText = new Font("res/arcadeclassic.ttf", 70); // Adjust the font path and size
         subtitleText = new Font("res/conformable.otf", 40);
         drawOptions = new DrawOptions();
-        player1 = new Player(new Point(200, 350), playerImg1);
-        player2 = new Player(new Point(1900, 50), playerImg2);
-        size1 = 1;
-        size2 = 1;
+        player1 = new Player(new Point(200, 350), new Image("res/playerBlue.png"));
+        player2 = new Player(new Point(1900, 50), new Image("res/playerRed.png"));
         /* ---------------------------- */
 
         for (int i = 0; i < MAX_NUM_PARTICLE; i++) {
             particles[numParticle] = randomParticle();
             numParticle++;
-        }
-    }
-
-    /* CHANGED BY PETER */
-    /**
-     * Movement of the player with - out of bounds - checker
-     */
-    public void movement(Player player, Input input) {
-        if (player.getPoint().x > 20 + size1 && input.isDown(Keys.LEFT)) {
-            player.moveLeft(STEP_SIZE);
-        }
-        if (player.getPoint().x < 1900 + size1 && input.isDown(Keys.RIGHT)) {
-            player.moveRight(STEP_SIZE);
-        }
-        if (player.getPoint().y > 20  + size1 && input.isDown(Keys.UP)) {
-            player.moveUp(STEP_SIZE);
-        }
-        if (player.getPoint().y < 1060 + size1 && input.isDown(Keys.DOWN)) {
-            player.moveDown(STEP_SIZE);
-        }
-        if (input.wasPressed(Keys.ESCAPE)) {
-            Window.close();
-        }
-    }
-
-    public void movement2(Player player, Input input) {
-        if (player.getPoint().x > 20 + size2 && input.isDown(Keys.A)) {
-            player.moveLeft(STEP_SIZE);
-        }
-        if (player.getPoint().x < 1900 + size2 && input.isDown(Keys.D)) {
-            player.moveRight(STEP_SIZE);
-        }
-        if (player.getPoint().y > 20  + size2 && input.isDown(Keys.W)) {
-            player.moveUp(STEP_SIZE);
-        }
-        if (player.getPoint().y < 1060 + size2 && input.isDown(Keys.S)) {
-            player.moveDown(STEP_SIZE);
-        }
-        if (input.wasPressed(Keys.ESCAPE)) {
-            Window.close();
         }
     }
 
@@ -162,34 +101,53 @@ public class Game extends AbstractGame {
      * Check for objects intersection
      */
     public void intersection(Player player, Particle particle) {
-        if (distance(player.getPoint(), particle.getPoint()) <= BASE * size1) {
-            // add score, since intersects
-            // ... remove particle ..
+        if (distance(player.getPoint(), particle.getPoint()) <= BASE * player.size) {
+            // remove particle
             particle.toggleHidden();
-            size1 += 0.5;
-            score++;
+            player.size += 0.5;
+            player.score++;
             // check every 5 score needs to be slower for player's speed
-            if ((score + 1) % 5 == 0) {
-                STEP_SIZE -= 0.25;
+            if ((player.score + 1) % 5 == 0) {
+                player.STEP_SIZE -= 0.25;
             }
         }
     }
 
-    public void intersection2(Player player, Particle particle) {
-        if (distance(player.getPoint(), particle.getPoint()) <= BASE * size2) {
-            // add score, since intersects
-            // ... remove particle ..
-            particle.toggleHidden();
-            size2 += 0.5;
-            score++;
-            // check every 5 score needs to be slower for player's speed
-            if ((score + 1) % 5 == 0) {
-                STEP_SIZE -= 0.25;
-            }
+    /**
+     * Check for players' intersection between one and another
+     */
+    public int isPlayerIntersect(Player player1, Player player2) {
+        if ((distance(player1.getPoint(), player2.getPoint()) <= BASE * player1.size) && (player1.size > player2.size)) {
+            // remove player 2
+            player2.toggleHidden();
+            return 2;
         }
+        else if ((distance(player2.getPoint(), player1.getPoint()) <= BASE * player2.size) && (player2.size > player1.size)) {
+            // remove player 1
+            player1.toggleHidden();
+            return 1;
+        }
+        return 0;
     }
 
-    /* --------------------------------------------------------- */
+    /**
+     * Implementation for players' intersection
+     */
+    public void playersIntersection (Player player1, Player player2) {
+        // If both do not intersect then draw all players
+        if (isPlayerIntersect(player1, player2) == 0) {
+            player1.draw(player1.size, player1.size);
+            player2.draw(player2.size, player2.size);
+        }
+        // If player 1 get eaten
+        else if (isPlayerIntersect(player1, player2) == 1) {
+            player2.draw(player2.size, player2.size);
+        }
+        // If player 2 get eaten
+        else if (isPlayerIntersect(player1, player2) == 2) {
+            player1.draw(player1.size, player1.size);
+        }
+    }
 
     /**
      * The entry point for the program.
@@ -206,30 +164,28 @@ public class Game extends AbstractGame {
     @Override
     public void update(Input input) {
         if (hasStarted) {
+            // Placement of BG image
             backgroundImage.draw(0,0, drawOptions.setScale(2,2));
-            /* CHANGED BY PETER */
-            // Movement of player
-            movement(player1, input);
-            movement2(player2, input);
-            /* ---------------- */
 
+            // Players' movement
+            player1.movement1(player1, input);
+            player2.movement2(player2, input);
+
+            // Checking, hiding and drawing particles
             for (Particle particle : particles) {
-                /* CHANGED BY PETER */
                 if (particle.getHidden()) continue;
-
                 intersection(player1, particle);
-                intersection2(player2, particle);
-                /* ------------------------------------- */
-
+                intersection(player2, particle);
                 particle.draw();
             }
 
-            /* CHANGED BY PETER */
-            // manual override of player image
-            playerImg1.draw(player1.getPoint().x, player1.getPoint().y, drawOptions.setScale(size1, size1));
-            playerImg2.draw(player2.getPoint().x, player2.getPoint().y, drawOptions.setScale(size2, size2));
-            textOutput.drawString("Score : " + score, 45, 100);
-            /* --------------------------------------------------------------- */
+            // Checking for player intersections
+            playersIntersection(player1, player2);
+
+            /* Output all the visuals */
+            textOutput.drawString("Score1 : " + player1.score, 45, 100);
+            textOutput.drawString("Score2 : " + player2.score, 45, 200);
+
         } else {
             double titleX = Window.getWidth() / 2.0 - titleText.getWidth("GAME TITLE") / 2;
             double titleY = Window.getHeight() / 2.0 + 70.0 / 2.0;
